@@ -1,0 +1,134 @@
+package org.future.code.homework;
+
+import java.io.PrintStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+
+public class HomeWork2 {
+    public static List<Boolean> checkLoginResults = Arrays.asList(true, true, true, false, false, false, true, false, false, false, false, true);
+    public static List<String> loginList = Arrays.asList("Minecraft_12", "Player_3433", "Dok_a111", "Java", "1122233", "Play__", "_Sun2_", "____", "Winx!", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa12_", "WOWOWOOWOWOWOOWOWOWOWOWOW", "Correct_22");
+
+    public HomeWork2() {
+    }
+
+    public static void validateLogin(String login) throws LoginValidationException {
+        if (login.length() > 20) {
+            throw new LoginValidationException();
+        } else if (!login.matches(".*[A-Z]+.*")) {
+            throw new LoginValidationException();
+        } else if (!login.matches(".*[0-9]+.*")) {
+            throw new LoginValidationException();
+        } else if (!login.matches(".*_+.*")) {
+            throw new LoginValidationException();
+        }
+    }
+
+    public static Boolean isLoginValid(String login) {
+        try {
+            validateLogin(login);
+            return true;
+        } catch (LoginValidationException var2) {
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("\nTests for validateLogin");
+        HomeWork2.AntiCheat.run();
+
+        int i;
+        for(i = 0; i < loginList.size(); ++i) {
+            try {
+                validateLogin((String)loginList.get(i));
+                printTestCase(i, (Boolean)checkLoginResults.get(i), true, 20);
+            } catch (Exception var3) {
+                printTestCase(i, (Boolean)checkLoginResults.get(i), false, 20);
+            }
+        }
+
+        System.out.println("\nTests for isLoginValid");
+        HomeWork2.AntiCheat.run();
+
+        for(i = 0; i < loginList.size(); ++i) {
+            printTestCase(i + loginList.size(), (Boolean)checkLoginResults.get(i), isLoginValid((String)loginList.get(i)), 20);
+        }
+
+    }
+
+    public static String constLen(String str, int len) {
+        StringBuilder sb = new StringBuilder(str);
+
+        while(len-- - str.length() > 0) {
+            sb.append(" ");
+        }
+
+        return sb.toString();
+    }
+
+    public static void printTestCase(int n, Boolean exp, Boolean act, int minLen) {
+        Function<String, String> green = (str) -> {
+            return "\u001b[34m" + str + "\u001b[0m";
+        };
+        Function<String, String> yellow = (str) -> {
+            return "\u001b[33m" + str + "\u001b[0m";
+        };
+        PrintStream var10000 = System.out;
+        String var10001 = String.valueOf(n);
+        var10000.print("TEST CASE " + constLen(var10001, 4));
+        var10000 = System.out;
+        var10001 = (String)yellow.apply(constLen(exp.toString(), minLen));
+        var10000.print("Ожидание: " + var10001 + " Реальность: " + (String)green.apply(constLen(act.toString(), minLen) + " "));
+        if (Objects.equals(exp, act)) {
+            System.out.print("a");
+        } else {
+            System.out.print("?");
+        }
+
+        System.out.println();
+    }
+
+    public static class AntiCheat {
+        public AntiCheat() {
+        }
+
+        public static void run() {
+            StringBuilder sb = new StringBuilder("");
+            List<String> antiCheatList = new ArrayList();
+            antiCheatList.addAll(HomeWork2.loginList);
+            antiCheatList.addAll(HomeWork2.checkLoginResults.stream().map(Object::toString).toList());
+            antiCheatList.add(sb.toString());
+            calcHash(antiCheatList);
+        }
+
+        public static String bytesToHex(byte[] bytes) {
+            char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+            char[] hexChars = new char[bytes.length * 2];
+
+            for(int j = 0; j < bytes.length; ++j) {
+                int v = bytes[j] & 255;
+                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+                hexChars[j * 2 + 1] = HEX_ARRAY[v & 15];
+            }
+
+            return new String(hexChars);
+        }
+
+        public static void calcHash(List<String> list) {
+            String total = String.join("", list);
+
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(total.getBytes());
+                byte[] digest = md.digest();
+                System.out.println("AntiCheatCheck: " + bytesToHex(digest));
+            } catch (NoSuchAlgorithmException var4) {
+            }
+
+        }
+    }
+}

@@ -36,9 +36,11 @@ public class HomeWork4 {
     public static List<String> correctedList(List<String> stringList) {
          List<String> correctedList = new ArrayList<>();
              for (String stroka : stringList) {
-                 if (!stroka.matches("A-Z")) {
+                 if (!stroka.matches(".*[A-Z].*")) {
                      correctedList.add(stroka);
-                 }
+                 } // Точка означает любой символ,
+                  // квадратные скобки используются для указания диапазона символов,
+                 // плюс означает "один или более раз", а звездочка означает "0 или более раз".
              }
         return correctedList;
     }

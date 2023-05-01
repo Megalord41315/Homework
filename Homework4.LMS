@@ -40,7 +40,7 @@ public class HomeWork4 {
                      correctedList.add(stroka);
                  }
              }
-        return Collections.emptyList();
+        return correctedList;
     }
     public static HashMap<String, Integer> magSort(HashMap<String, Integer> shopCart) {
                 Iterator<Map.Entry<String,Integer>>
